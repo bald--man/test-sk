@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+
+{% block head_title %}
+{{ instance.name }} | {{ block.super }}
+{% endblock head_title %}
+{% block content %}
+<div class='col-sm-6 col-sm-offset-3'>
+ <h1>{{ name }}</h1>
+ {% if request.user.is_authenticated %}
+   <p><a class="btn btn-mini btn-danger glyphicon glyphicon-heart" type="button" data-href='{{ instance.get_like_url }}' data-likes='{{ instance.likes.count }}' href='{{ instance.get_like_url }}'> {{ instance.likes.count }}</a></p>
+ {% endif %}
+ <p>$ {{ instance.price }}</p>
+ <p>{{ instance.description }}</p>
+ <hr/>
+ <br/>
+
+ <div>
+   {{ instance.comment_set.all }}
+
+   <p class='lead'>Comments</p>
+   <hr/>
+   <form method="POST" action="."> {% csrf_token %}
+    {{ comment_form }}
+    <input type='submit' value='Product comment' class='btn btn-default'>
+   </form>
+   <hr/>
+     {% for comment in comments reversed %}
+         <blockquote>
+           <p>{{ comment.content }}</p>
+           <footer>posted {{ comment.timestamp|timesince }} ago</footer>
+         </blockquote>
+     <hr/>
+
+     {% endfor %}
+
+ </div>
+
+</div>
+
+{% endblock content %}

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+<div class='col-sm-6 col-sm-offset-3'>
+ <h1>Product list</h1>
+
+  {% if request.user.is_authenticated %}
+  <div class="row">
+    <div class="col-xs-3">
+        {% if 'sort=likes' in request.get_full_path %}
+        <a href="/products/"><h6>Remove sorting</h6></a>
+        {% else %}
+        <a href="?sort=likes"><h5>Sort by likes</h5></a>
+        {% endif %}
+    </div>
+  </div>
+  {% endif %}
+
+
+
+ {% for obj in object_list %}
+ <div class="row">
+   <div class="col-sm-12">
+     <div class="caption">
+       <h3><a href='{{ obj.get_absolute_url }}'>{{ obj.name }}</a></h3>
+       {% if request.user.is_authenticated %}
+         <p><a class="btn btn-mini btn-danger glyphicon glyphicon-heart" type="button" data-href='{{ obj.get_like_url }}' data-likes='{{ obj.likes.count }}'  href='{{ obj.get_like_url }}'> {{ obj.likes.count }}</a></p>
+       {% endif %}
+       <p>$ {{ obj.price }}</p>
+       <p>{{ obj.description|linebreaks|truncatechars:120 }}</p>
+       <p><a href="{{ obj.get_absolute_url }}" class="btn btn-primary" role="button">View</a></p>
+     </div>
+   </div>
+   <hr/>
+ </div>
+ {% endfor %}
+
+<div class="pagination">
+  <span class="step-links">
+   {% if object_list.has_previous %}
+     <a href="?{{ page_request_var }}={{ object_list.previous_page_number }}">previous</a>
+   {% endif %}
+
+   <span class="current">
+     Page {{ object_list.number }} of {{ object_list.paginator.num_pages }}.
+   </span>
+
+   {% if object_list.has_next %}
+      <a href="?{{ page_request_var }}={{ object_list.next_page_number }}">next</a>
+   {% endif %}
+  </span>
+</div>
+
+</div>
+
+{% endblock content %}
